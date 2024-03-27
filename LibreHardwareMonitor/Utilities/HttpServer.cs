@@ -19,6 +19,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Web;
+using System.Windows.Forms;
 using LibreHardwareMonitor.Hardware;
 using LibreHardwareMonitor.UI;
 using Newtonsoft.Json.Linq;
@@ -257,19 +258,7 @@ public class HttpServer
 
         try
         {
-            if (request.Url.Segments.Length == 2)
-            {
-                if (request.Url.Segments[1] == "Sensor")
-                {
-                    HandleSensorRequest(request, result);
-                }
-                else
-                {
-                    throw new ArgumentException("Invalid URL ('" + request.Url.Segments[1] + "'), possible values: ['Sensor']");
-                }
-            }
-            else
-                throw new ArgumentException("Empty URL, possible values: ['Sensor']");
+            HandleSensorRequest(request, result);
         }
         catch (Exception e)
         {
@@ -327,23 +316,28 @@ public class HttpServer
             switch (request.HttpMethod)
             {
                 case "POST":
-                    {
-                        string postResult = HandlePostRequest(request);
-
-                        Stream output = context.Response.OutputStream;
-                        byte[] utfBytes = Encoding.UTF8.GetBytes(postResult);
-
-                        context.Response.AddHeader("Cache-Control", "no-cache");
-                        context.Response.ContentLength64 = utfBytes.Length;
-                        context.Response.ContentType = "application/json";
-
-                        output.Write(utfBytes, 0, utfBytes.Length);
-                        output.Close();
-
-                        break;
-                    }
                 case "GET":
                     {
+                        if (request.Url.Segments.Length == 2)
+                        {
+                            if (request.Url.Segments[1] == "api")
+                            {
+                                string postResult = HandlePostRequest(request);
+
+                                Stream output = context.Response.OutputStream;
+                                byte[] utfBytes = Encoding.UTF8.GetBytes(postResult);
+
+                                context.Response.AddHeader("Cache-Control", "no-cache");
+                                context.Response.ContentLength64 = utfBytes.Length;
+                                context.Response.ContentType = "application/json";
+
+                                output.Write(utfBytes, 0, utfBytes.Length);
+                                output.Close();
+
+                                break;
+                            }
+                        }
+
                         string requestedFile = request.RawUrl.Substring(1);
 
                         if (requestedFile == "data.json")

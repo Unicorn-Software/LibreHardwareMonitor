@@ -109,9 +109,9 @@ public sealed partial class MainForm : Form
 
         _computer = new Computer(_settings);
 
-        _systemTray = new SystemTray(_computer, _settings, _unitManager);
-        _systemTray.HideShowCommand += HideShowClick;
-        _systemTray.ExitCommand += ExitClick;
+        // _systemTray = new SystemTray(_computer, _settings, _unitManager);
+        // _systemTray.HideShowCommand += HideShowClick;
+        // _systemTray.ExitCommand += ExitClick;
 
         if (Software.OperatingSystem.IsUnix)
         {
@@ -178,7 +178,7 @@ public sealed partial class MainForm : Form
 
         var _ = new UserOption("startMinMenuItem", false, startMinMenuItem, _settings);
         _minimizeToTray = new UserOption("minTrayMenuItem", true, minTrayMenuItem, _settings);
-        _minimizeToTray.Changed += delegate { _systemTray.IsMainIconEnabled = _minimizeToTray.Value; };
+        // _minimizeToTray.Changed += delegate { _systemTray.IsMainIconEnabled = _minimizeToTray.Value; };
 
         _minimizeOnClose = new UserOption("minCloseMenuItem", false, minCloseMenuItem, _settings);
 
@@ -249,7 +249,7 @@ public sealed partial class MainForm : Form
             webMenuItem.Visible = false;
         }
 
-        _runWebServer = new UserOption("runWebServerMenuItem", false, runWebServerMenuItem, _settings);
+        _runWebServer = new UserOption("runWebServerMenuItem", true, runWebServerMenuItem, _settings);
         _runWebServer.Changed += delegate
         {
             if (_runWebServer.Value)
@@ -760,7 +760,7 @@ public sealed partial class MainForm : Form
     private void Timer_Tick(object sender, EventArgs e)
     {
         treeView.Invalidate();
-        _systemTray.Redraw();
+        // _systemTray.Redraw();
         _gadget?.Redraw();
         _wmiProvider?.Update();
 
@@ -860,14 +860,14 @@ public sealed partial class MainForm : Form
         FormClosed -= MainForm_FormClosed;
 
         Visible = false;
-        _systemTray.IsMainIconEnabled = false;
+        // _systemTray.IsMainIconEnabled = false;
         timer.Enabled = false;
         _computer.Close();
         SaveConfiguration();
         if (_runWebServer.Value)
             Server.Quit();
 
-        _systemTray.Dispose();
+        // _systemTray.Dispose();
         timer.Dispose();
         backgroundUpdater.Dispose();
 
@@ -955,13 +955,13 @@ public sealed partial class MainForm : Form
                 treeContextMenu.Items.Add(new ToolStripSeparator());
                 {
                     ToolStripMenuItem item = new("Show in Tray") { Checked = _systemTray.Contains(node.Sensor) };
-                    item.Click += delegate
+                    /*item.Click += delegate
                     {
                         if (item.Checked)
                             _systemTray.Remove(node.Sensor);
                         else
                             _systemTray.Add(node.Sensor, true);
-                    };
+                    };*/
 
                     treeContextMenu.Items.Add(item);
                 }
@@ -1140,10 +1140,10 @@ public sealed partial class MainForm : Form
     {
         // disable the fallback MainIcon during reset, otherwise icon visibility
         // might be lost
-        _systemTray.IsMainIconEnabled = false;
+        // _systemTray.IsMainIconEnabled = false;
         _computer.Reset();
         // restore the MainIcon setting
-        _systemTray.IsMainIconEnabled = _minimizeToTray.Value;
+        // _systemTray.IsMainIconEnabled = _minimizeToTray.Value;
     }
 
     private void TreeView_MouseMove(object sender, MouseEventArgs e)
