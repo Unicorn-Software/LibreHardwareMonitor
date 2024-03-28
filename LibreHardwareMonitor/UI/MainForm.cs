@@ -182,7 +182,7 @@ public sealed partial class MainForm : Form
 
         _minimizeOnClose = new UserOption("minCloseMenuItem", false, minCloseMenuItem, _settings);
 
-        _autoStart = new UserOption(null, _startupManager.Startup, startupMenuItem, _settings);
+        _autoStart = new UserOption(null, true, startupMenuItem, _settings);
         _autoStart.Changed += delegate
         {
             try
@@ -436,13 +436,13 @@ public sealed partial class MainForm : Form
         {
             if (!minTrayMenuItem.Checked)
             {
-                WindowState = FormWindowState.Minimized;
-                Show();
+                //WindowState = FormWindowState.Minimized;
+                //Show();
             }
         }
         else
         {
-            Show();
+            //Show();
         }
 
         // Create a handle, otherwise calling Close() does not fire FormClosed
